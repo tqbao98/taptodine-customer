@@ -1,85 +1,83 @@
 'use client';
 
 import { useStore } from '@/store/useStore';
-import { loadStripe } from '@stripe/stripe-js';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function CheckoutPage() {
   const { cart } = useStore();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  useEffect(() => {
-    const handleCheckout = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-        const stripe = await stripePromise;
-        if (!stripe) throw new Error('Stripe failed to initialize');
-
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ cart }),
-        });
-
-        const { sessionId } = await response.json();
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-
-        if (error) {
-          setError(error.message || 'An error occurred');
-        }
-      } catch (err) {
-        setError('An error occurred during checkout');
-        console.error('Checkout error:', err);
-      } finally {
-        setLoading(false);
-      }
+  const handlePlaceOrder = () => {
+    // Create order and clear cart
+    const order = {
+      id: Date.now().toString(),
+      items: cart,
+      total,
+      status: 'pending' as const,
+      createdAt: new Date().toISOString(),
     };
 
-    if (cart.length > 0) {
-      handleCheckout();
-    }
-  }, [cart]);
+    useStore.getState().addOrder(order);
+    useStore.getState().clearCart();
+    router.push('/success');
+  };
 
-  if (loading) {
+  if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Processing your order...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Link
-            href="/"
-            className="text-indigo-600 hover:text-indigo-800"
-          >
-            Return to Menu
-          </Link>
-        </div>
+      <div className="py-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <p className="text-gray-500">Your cart is empty</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Redirecting to checkout...</p>
+    <div className="py-6">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="space-y-4">
+          {cart.map((item) => (
+            <div key={item.id} className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={64}
+                  height={64}
+                  className="object-cover rounded-md"
+                />
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    ${item.price.toFixed(2)} x {item.quantity}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm font-medium text-gray-900">
+                ${(item.price * item.quantity).toFixed(2)}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 border-t border-gray-200 pt-6">
+          <div className="flex justify-between text-lg font-medium text-gray-900">
+            <span>Total</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={handlePlaceOrder}
+            className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Place Order
+          </button>
+        </div>
       </div>
     </div>
   );
