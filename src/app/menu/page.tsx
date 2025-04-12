@@ -1,20 +1,21 @@
 'use client';
 
-import { useStore } from '@/store/useStore';
+import { useStore, MenuItem } from '@/store/useStore';
 import { useState } from 'react';
 import DishModal from '@/components/DishModal';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function MenuPage() {
   const { menu, addToCart } = useStore();
-  const [selectedDish, setSelectedDish] = useState<any>(null);
+  const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
   const router = useRouter();
 
-  const handleDishClick = (dish: any) => {
+  const handleDishClick = (dish: MenuItem) => {
     setSelectedDish(dish);
   };
 
-  const handleAddToCart = (dish: any, quantity: number) => {
+  const handleAddToCart = (dish: MenuItem, quantity: number) => {
     addToCart(dish, quantity);
     setSelectedDish(null);
     router.push('/cart');
@@ -31,9 +32,11 @@ export default function MenuPage() {
             onClick={() => handleDishClick(dish)}
           >
             <div className="aspect-w-16 aspect-h-9">
-              <img
+              <Image
                 src={dish.image}
                 alt={dish.name}
+                width={384}
+                height={192}
                 className="object-cover w-full h-48"
               />
             </div>

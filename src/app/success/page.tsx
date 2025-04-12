@@ -1,24 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
-export default function SuccessPage() {
-  const router = useRouter();
+function SuccessContent() {
   const searchParams = useSearchParams();
   const { cart, clearCart, addOrder } = useStore();
 
   useEffect(() => {
-    const sessionId = searchParams.get('session_id');
-    if (sessionId && cart.length > 0) {
-      // Create a new order
+    if (searchParams.get('success') === 'true') {
       const order = {
-        id: sessionId,
+        id: searchParams.get('session_id') || Date.now().toString(),
         items: cart,
         total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
         status: 'completed' as const,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
       };
 
       addOrder(order);
@@ -27,21 +24,33 @@ export default function SuccessPage() {
   }, [searchParams, cart, addOrder, clearCart]);
 
   return (
-    <div className="py-6">
-      <div className="max-w-2xl mx-auto text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Payment Successful!
         </h1>
-        <p className="text-lg text-gray-600 mb-8">
-          Thank you for your order. Your payment has been processed successfully.
+        <p className="text-gray-600 mb-8">
+          Thank you for your order. We&apos;ll start preparing your food right away.
         </p>
-        <button
-          onClick={() => router.push('/orders')}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        <a
+          href="/orders"
+          className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
         >
           View Orders
-        </button>
+        </a>
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 } 

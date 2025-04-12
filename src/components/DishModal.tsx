@@ -3,22 +3,18 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { MenuItem } from '@/store/useStore';
+import Image from 'next/image';
 
 interface DishModalProps {
-  isOpen: boolean;
+  dish: MenuItem;
   onClose: () => void;
-  item: {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    image: string;
-  };
+  onAddToCart: (dish: MenuItem, quantity: number) => void;
 }
 
-export default function DishModal({ isOpen, onClose, item }: DishModalProps) {
+export default function DishModal({ dish, onClose, onAddToCart }: DishModalProps) {
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition appear show={true} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
         <Transition.Child
           as={Fragment}
@@ -56,23 +52,34 @@ export default function DishModal({ isOpen, onClose, item }: DishModalProps) {
                 </div>
 
                 <div className="mt-2">
-                  <div className="aspect-w-16 aspect-h-9 mb-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="object-cover w-full h-48 rounded-lg"
+                  <div className="mt-4">
+                    <Image
+                      src={dish.image}
+                      alt={dish.name}
+                      width={384}
+                      height={192}
+                      className="w-full h-48 object-cover rounded-lg"
                     />
                   </div>
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    {item.name}
+                    {dish.name}
                   </Dialog.Title>
-                  <p className="mt-2 text-sm text-gray-500">{item.description}</p>
+                  <p className="mt-2 text-sm text-gray-500">{dish.description}</p>
                   <p className="mt-4 text-lg font-medium text-gray-900">
-                    ${item.price.toFixed(2)}
+                    ${dish.price.toFixed(2)}
                   </p>
+                  <div className="mt-6">
+                    <button
+                      type="button"
+                      className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                      onClick={() => onAddToCart(dish, 1)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

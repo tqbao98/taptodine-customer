@@ -1,24 +1,10 @@
 'use client';
 
 import { useStore } from '@/store/useStore';
-import { useEffect, useState } from 'react';
-
-interface Order {
-  id: string;
-  items: Array<{
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-  }>;
-  total: number;
-  status: 'pending' | 'completed' | 'cancelled';
-  createdAt: string;
-}
+import { useEffect } from 'react';
 
 export default function OrdersPage() {
   const { orders, fetchOrders } = useStore();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -26,21 +12,11 @@ export default function OrdersPage() {
         await fetchOrders();
       } catch (error) {
         console.error('Error fetching orders:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     loadOrders();
   }, [fetchOrders]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="py-6">

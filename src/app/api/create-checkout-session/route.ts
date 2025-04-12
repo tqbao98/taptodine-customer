@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { CartItem } from '@/store/useStore';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-03-31.basil',
 });
 
 export async function POST(request: Request) {
   try {
     const { cart } = await request.json();
 
-    const lineItems = cart.map((item: any) => ({
+    const lineItems = cart.map((item: CartItem) => ({
       price_data: {
         currency: 'usd',
         product_data: {

@@ -7,6 +7,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  options?: string[];
 }
 
 export interface MenuItem {
@@ -35,9 +36,10 @@ interface StoreState {
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   fetchOrders: () => Promise<void>;
+  addOrder: (order: Order) => void;
 }
 
-const useStore = create<StoreState>((set) => ({
+export const useStore = create<StoreState>((set) => ({
   cart: [],
   menu: [
     {
@@ -123,6 +125,8 @@ const useStore = create<StoreState>((set) => ({
     ];
     set({ orders: mockOrders });
   },
-}));
-
-export default useStore; 
+  addOrder: (order) =>
+    set((state) => ({
+      orders: [...state.orders, order],
+    })),
+})); 
