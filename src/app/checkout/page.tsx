@@ -3,6 +3,7 @@
 import { useStore } from '@/store/useStore';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -63,12 +64,12 @@ export default function CheckoutPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
-          <a
+          <Link
             href="/"
             className="text-indigo-600 hover:text-indigo-800"
           >
             Return to Menu
-          </a>
+          </Link>
         </div>
       </div>
     );

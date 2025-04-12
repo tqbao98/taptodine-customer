@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { useStore } from '@/store/useStore';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
@@ -9,11 +8,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function POST(request: Request) {
   try {
     const { cart } = await request.json();
-    const lineItems = cart.map((item: { id: string; name: string; price: number; quantity: number }) => ({
+
+    const lineItems = cart.map((item: any) => ({
       price_data: {
         currency: 'usd',
         product_data: {
           name: item.name,
+          images: [item.image],
         },
         unit_amount: Math.round(item.price * 100),
       },
@@ -24,8 +25,8 @@ export async function POST(request: Request) {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/orders?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/menu`,
     });
 
     return NextResponse.json({ sessionId: session.id });
