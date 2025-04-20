@@ -75,26 +75,30 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Quantity</h3>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900">Quantity</h3>
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-900"
               >
-                -
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
               </button>
-              <span className="text-lg font-medium">{quantity}</span>
+              <span className="text-lg font-medium text-gray-900">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-900"
               >
-                +
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
               </button>
             </div>
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Size</h3>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900">Size</h3>
             <div className="flex gap-2">
               {['small', 'regular', 'large'].map((size) => (
                 <button
@@ -103,7 +107,7 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
                   className={`px-4 py-2 rounded-full ${
                     selectedSize === size
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   }`}
                 >
                   {size.charAt(0).toUpperCase() + size.slice(1)}
@@ -113,7 +117,7 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Extras</h3>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900">Extras</h3>
             <div className="grid grid-cols-2 gap-2">
               {['Extra Meat', 'Extra Cheese', 'Extra Vegetables', 'Spicy'].map((extra) => (
                 <label key={extra} className="flex items-center space-x-2">
@@ -123,19 +127,19 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
                     onChange={(e) => setExtras({ ...extras, [extra]: e.target.checked })}
                     className="rounded text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span>{extra}</span>
+                  <span className="text-gray-900">{extra}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Special Instructions</h3>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900">Special Instructions</h3>
             <textarea
               value={specialInstructions}
               onChange={(e) => setSpecialInstructions(e.target.value)}
               placeholder="Any special requests?"
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
               rows={3}
             />
           </div>
