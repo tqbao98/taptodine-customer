@@ -21,6 +21,7 @@ export interface MenuItem {
 
 export interface Order {
   id: string;
+  restaurantName: string;
   items: CartItem[];
   total: number;
   status: 'pending' | 'completed' | 'cancelled';
@@ -108,6 +109,7 @@ export const useStore = create<StoreState>((set) => ({
     const mockOrders: Order[] = [
       {
         id: '1',
+        restaurantName: 'Pizza Palace',
         items: [
           {
             id: '1',
@@ -121,6 +123,31 @@ export const useStore = create<StoreState>((set) => ({
         total: 25.98,
         status: 'completed',
         createdAt: new Date().toISOString(),
+      },
+      {
+        id: '2',
+        restaurantName: 'Pizza Palace',
+        items: [
+          {
+            id: '2',
+            name: 'Pepperoni Pizza',
+            description: 'Pizza with tomato sauce, mozzarella, and pepperoni',
+            price: 14.99,
+            quantity: 1,
+            image: '/images/pepperoni.jpg',
+          },
+          {
+            id: '3',
+            name: 'Caesar Salad',
+            description: 'Romaine lettuce, croutons, parmesan, and Caesar dressing',
+            price: 8.99,
+            quantity: 2,
+            image: '/images/caesar.jpg',
+          },
+        ],
+        total: 32.97,
+        status: 'pending',
+        createdAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
       },
     ];
     set({ orders: mockOrders });

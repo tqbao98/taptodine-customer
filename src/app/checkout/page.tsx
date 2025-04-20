@@ -14,6 +14,7 @@ export default function CheckoutPage() {
     // Create order and clear cart
     const order = {
       id: Date.now().toString(),
+      restaurantName: 'Pizza Palace',
       items: cart,
       total,
       status: 'pending' as const,
