@@ -30,7 +30,7 @@ export default function CheckoutPage() {
     return (
       <div className="py-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
-        <p className="text-gray-500">Your cart is empty</p>
+        <p className="text-gray-500 px-4 sm:px-6">Your cart is empty</p>
       </div>
     );
   }

@@ -7,8 +7,6 @@ import { Dish } from '@/types/menu';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useStore } from '@/store/useStore';
 
-const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNjMGMwYzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
-
 export default function MenuPage() {
   const { menu, fetchMenu, isLoading: isMenuLoading, error } = useStore();
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
@@ -163,42 +161,27 @@ export default function MenuPage() {
                     className="flex cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => setSelectedDish(dish)}
                   >
-                    {/* Left side - Text content */}
-                    <div className="flex-1 p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {dish.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                        {dish.description}
-                      </p>
-                      <span className="text-base font-bold text-gray-900">
-                        ${dish.price.toFixed(2)}
-                      </span>
+                    <div className="flex-1 p-3">
+                      <h3 className="text-base font-medium text-gray-900">{dish.name}</h3>
+                      <p className="mt-0.5 text-xs text-gray-500 line-clamp-2">{dish.description}</p>
+                      <p className="mt-1 text-sm font-medium text-gray-900">${dish.price.toFixed(2)}</p>
                     </div>
-
-                    {/* Right side - Image */}
-                    <div className="relative w-32 h-32">
+                    <div className="relative w-24 h-24 flex-shrink-0">
+                      {dish.image && (
+                        <Image
+                          src={dish.image}
+                          alt={dish.name}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                          onLoadingComplete={() => handleImageLoad(dish.id)}
+                        />
+                      )}
                       {loadingImages[dish.id] && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <LoadingSpinner />
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                          <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
                         </div>
                       )}
-                      <Image
-                        src={dish.image}
-                        alt={dish.name}
-                        width={128}
-                        height={128}
-                        className={`object-cover w-full h-full ${
-                          loadingImages[dish.id] ? 'opacity-0' : 'opacity-100'
-                        }`}
-                        priority
-                        onLoadingComplete={() => handleImageLoad(dish.id)}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = placeholderImage;
-                          handleImageLoad(dish.id);
-                        }}
-                      />
                     </div>
                   </div>
                 ))}
