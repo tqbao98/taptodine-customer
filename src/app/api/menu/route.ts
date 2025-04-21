@@ -12,9 +12,10 @@ interface MenuItem {
   id: number;
   name: string;
   description: string;
-  price: number;
-  image: string;
-  category?: string;
+  price: string;
+  image?: string;
+  labels?: string;
+  ingredients?: string;
 }
 
 interface MenuResponse {
@@ -55,9 +56,11 @@ export async function GET() {
           id: item.id,
           name: item.name,
           description: item.description || '',
-          price: typeof item.price === 'number' ? item.price : 0,
+          price: parseFloat(item.price),
           image: imageUrl,
-          category: section.title
+          category: section.title,
+          labels: item.labels,
+          ingredients: item.ingredients
         };
       })
     );
