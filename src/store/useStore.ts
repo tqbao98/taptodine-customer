@@ -32,51 +32,23 @@ interface StoreState {
   cart: CartItem[];
   menu: MenuItem[];
   orders: Order[];
+  isLoading: boolean;
+  error: string | null;
   addToCart: (item: MenuItem, quantity: number) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   fetchOrders: () => Promise<void>;
   addOrder: (order: Order) => void;
+  fetchMenu: () => Promise<void>;
 }
 
 export const useStore = create<StoreState>((set) => ({
   cart: [],
-  menu: [
-    {
-      id: '1',
-      name: 'Margherita Pizza',
-      description: 'Classic pizza with tomato sauce, mozzarella, and basil',
-      price: 12.99,
-      image: '/images/margherita.jpg',
-      category: 'Pizza',
-    },
-    {
-      id: '2',
-      name: 'Pepperoni Pizza',
-      description: 'Pizza with tomato sauce, mozzarella, and pepperoni',
-      price: 14.99,
-      image: '/images/pepperoni.jpg',
-      category: 'Pizza',
-    },
-    {
-      id: '3',
-      name: 'Caesar Salad',
-      description: 'Romaine lettuce, croutons, parmesan, and Caesar dressing',
-      price: 8.99,
-      image: '/images/caesar.jpg',
-      category: 'Salads',
-    },
-    {
-      id: '4',
-      name: 'Chicken Wings',
-      description: 'Crispy chicken wings with your choice of sauce',
-      price: 10.99,
-      image: '/images/wings.jpg',
-      category: 'Appetizers',
-    },
-  ],
+  menu: [],
   orders: [],
+  isLoading: false,
+  error: null,
   addToCart: (item, quantity) =>
     set((state) => {
       const existingItem = state.cart.find((cartItem) => cartItem.id === item.id);
@@ -156,4 +128,42 @@ export const useStore = create<StoreState>((set) => ({
     set((state) => ({
       orders: [...state.orders, order],
     })),
+  fetchMenu: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      console.log('Fetching menu from API...');
+      const response = await fetch('/api/menu', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('API response data:', data);
+      
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response format: expected an object');
+      }
+      
+      if (!data.menu || !Array.isArray(data.menu)) {
+        console.error('Invalid menu data structure:', data);
+        throw new Error('Invalid menu data format: expected an array in menu property');
+      }
+      
+      console.log('Setting menu with items:', data.menu);
+      set({ menu: data.menu, isLoading: false });
+    } catch (error) {
+      console.error('Error fetching menu:', error);
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to fetch menu',
+        isLoading: false 
+      });
+    }
+  },
 })); 

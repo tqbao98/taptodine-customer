@@ -4,7 +4,7 @@ export interface Dish {
   description: string;
   price: number;
   image: string;
-  category: 'main' | 'appetizer' | 'dessert' | 'vegan' | 'drink';
+  category: string;
   size?: string;
   extras?: string[];
   specialInstructions?: string;
