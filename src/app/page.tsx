@@ -153,50 +153,52 @@ export default function MenuPage() {
               data-category={category}
               className="scroll-mt-20"
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4 px-4 sm:px-6">
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-lg divide-y divide-gray-200">
                 {dishes.map((dish) => (
                   <div
                     key={dish.id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                    className="flex cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => setSelectedDish(dish)}
                   >
-                    <div className="relative h-48">
-                      {loadingImages[dish.id] && <LoadingSpinner />}
-                      {dish.image && (
-                        <Image
-                          src={dish.image}
-                          alt={dish.name}
-                          width={400}
-                          height={300}
-                          className={`object-cover w-full h-full ${
-                            loadingImages[dish.id] ? 'opacity-0' : 'opacity-100'
-                          }`}
-                          priority
-                          onLoadingComplete={() => handleImageLoad(dish.id)}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = placeholderImage;
-                            handleImageLoad(dish.id);
-                          }}
-                        />
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {/* Left side - Text content */}
+                    <div className="flex-1 p-4">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
                         {dish.name}
                       </h3>
-                      <p className="text-gray-600 mb-4">{dish.description}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-gray-900">
-                          ${dish.price.toFixed(2)}
-                        </span>
-                        <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                          Add to Cart
-                        </button>
-                      </div>
+                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                        {dish.description}
+                      </p>
+                      <span className="text-base font-bold text-gray-900">
+                        ${dish.price.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* Right side - Image */}
+                    <div className="relative w-32 h-32">
+                      {loadingImages[dish.id] && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <LoadingSpinner />
+                        </div>
+                      )}
+                      <Image
+                        src={dish.image}
+                        alt={dish.name}
+                        width={128}
+                        height={128}
+                        className={`object-cover w-full h-full ${
+                          loadingImages[dish.id] ? 'opacity-0' : 'opacity-100'
+                        }`}
+                        priority
+                        onLoadingComplete={() => handleImageLoad(dish.id)}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = placeholderImage;
+                          handleImageLoad(dish.id);
+                        }}
+                      />
                     </div>
                   </div>
                 ))}
