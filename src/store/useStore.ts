@@ -34,6 +34,7 @@ interface StoreState {
   orders: Order[];
   isLoading: boolean;
   error: string | null;
+  restaurantName: string;
   addToCart: (item: MenuItem, quantity: number) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
@@ -49,6 +50,7 @@ export const useStore = create<StoreState>((set) => ({
   orders: [],
   isLoading: false,
   error: null,
+  restaurantName: '',
   addToCart: (item, quantity) =>
     set((state) => {
       const existingItem = state.cart.find((cartItem) => cartItem.id === item.id);
@@ -157,7 +159,11 @@ export const useStore = create<StoreState>((set) => ({
       }
       
       console.log('Setting menu with items:', data.menu);
-      set({ menu: data.menu, isLoading: false });
+      set({ 
+        menu: data.menu, 
+        restaurantName: data.restaurantName || '',
+        isLoading: false 
+      });
     } catch (error) {
       console.error('Error fetching menu:', error);
       set({ 
@@ -166,4 +172,4 @@ export const useStore = create<StoreState>((set) => ({
       });
     }
   },
-})); 
+}));

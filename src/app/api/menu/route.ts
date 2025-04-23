@@ -29,7 +29,7 @@ interface MenuResponse {
 
 export async function GET() {
   try {
-    const response = await fetch('https://taptodine-backend.onrender.com/api/menu/1', {
+    const response = await fetch('https://api.test.juhaluoto.net/api/menu/1', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -67,7 +67,10 @@ export async function GET() {
     
     console.log('Transformed menu items:', menuItems);
     
-    return NextResponse.json({ menu: menuItems });
+    return NextResponse.json({ 
+      menu: menuItems,
+      restaurantName: data.restaurant.name 
+    });
   } catch (error) {
     console.error('Error fetching menu:', error);
     return NextResponse.json(
@@ -75,4 +78,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-} 
+}

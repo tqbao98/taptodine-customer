@@ -6,6 +6,7 @@ import Image from 'next/image';
 
 export default function CheckoutPage() {
   const { cart } = useStore();
+  const restaurantName = useStore((state) => state.restaurantName);
   const router = useRouter();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -14,7 +15,7 @@ export default function CheckoutPage() {
     // Create order and clear cart
     const order = {
       id: Date.now().toString(),
-      restaurantName: 'Pizza Palace',
+      restaurantName: restaurantName,
       items: cart,
       total,
       status: 'pending' as const,
@@ -82,4 +83,4 @@ export default function CheckoutPage() {
       </div>
     </div>
   );
-} 
+}
