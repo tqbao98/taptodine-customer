@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Dish } from '@/types/menu';
 import { useStore } from '@/store/useStore';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import PlaceholderImage from '@/components/PlaceholderImage';
 
 interface DishModalProps {
   dish: Dish;
@@ -12,20 +13,22 @@ interface DishModalProps {
   onClose: () => void;
 }
 
-const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNjMGMwYzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
-
 export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
   const { addToCart } = useStore();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('regular');
   const [extras, setExtras] = useState<Record<string, boolean>>({});
   const [specialInstructions, setSpecialInstructions] = useState('');
-  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({});
+  const [imageState, setImageState] = useState({ loading: true, error: false });
 
   if (!isOpen) return null;
 
   const handleImageLoad = () => {
-    setLoadingImages(prev => ({ ...prev, [dish.id]: false }));
+    setImageState({ loading: false, error: false });
+  };
+
+  const handleImageError = () => {
+    setImageState({ loading: false, error: true });
   };
 
   const handleAddToCart = () => {
@@ -59,28 +62,29 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
 
           {/* Scrollable Content */}
           <div className="overflow-y-auto flex-1 p-6">
-            <div className="relative h-64 w-full mb-4">
-              {loadingImages[dish.id] && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <LoadingSpinner />
-                </div>
+            <div className="relative h-64 w-full mb-4 rounded-lg overflow-hidden">
+              {dish.image && !imageState.error ? (
+                <>
+                  <Image
+                    src={dish.image}
+                    alt={dish.name}
+                    fill
+                    className="object-cover transition-opacity duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    priority
+                    quality={90}
+                    onLoadingComplete={handleImageLoad}
+                    onError={handleImageError}
+                  />
+                  {imageState.loading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+                      <LoadingSpinner />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <PlaceholderImage className="w-full h-full" />
               )}
-              <Image
-                src={dish.image}
-                alt={dish.name}
-                width={400}
-                height={300}
-                className={`object-cover w-full h-full rounded-lg ${
-                  loadingImages[dish.id] ? 'opacity-0' : 'opacity-100'
-                }`}
-                priority
-                onLoadingComplete={handleImageLoad}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = placeholderImage;
-                  handleImageLoad();
-                }}
-              />
             </div>
             
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{dish.name}</h3>
@@ -176,4 +180,4 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
       </div>
     </div>
   );
-} 
+}

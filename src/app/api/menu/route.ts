@@ -13,7 +13,7 @@ interface MenuItem {
   name: string;
   description: string;
   price: string;
-  image?: string;
+  photoUrl?: string;
   labels?: string;
   ingredients?: string;
 }
@@ -47,7 +47,7 @@ export async function GET() {
     const menuItems = data.sections.flatMap((section: MenuSection) => 
       section.items.map((item: MenuItem) => {
         // Ensure we have a valid image URL
-        const imageUrl = item.image?.trim() || placeholderImage;
+        const imageUrl = item.photoUrl?.trim() || placeholderImage;
         if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:')) {
           console.warn(`Invalid image URL for item ${item.id}: ${imageUrl}`);
         }
