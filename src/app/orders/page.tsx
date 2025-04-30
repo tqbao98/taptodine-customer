@@ -2,7 +2,7 @@
 
 import { useStore } from '@/store/useStore';
 import { useEffect, useState } from 'react';
-import { Order } from '@/types';
+import { Order } from '@/types/order';
 import OrderDetailsModal from '@/components/OrderDetailsModal';
 
 export default function OrdersPage() {
@@ -83,4 +83,4 @@ export default function OrdersPage() {
       )}
     </div>
   );
-}
+} 

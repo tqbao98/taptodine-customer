@@ -1,7 +1,34 @@
 import { create } from 'zustand';
-import { MenuItem, CartItem, Order } from '@/types';
 
-export interface StoreState {
+export interface CartItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  image: string;
+  options?: string[];
+}
+
+export interface MenuItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+}
+
+export interface Order {
+  id: string;
+  restaurantName: string;
+  items: CartItem[];
+  total: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  createdAt: string;
+}
+
+interface StoreState {
   cart: CartItem[];
   menu: MenuItem[];
   orders: Order[];
@@ -65,7 +92,6 @@ export const useStore = create<StoreState>((set) => ({
             price: 12.99,
             quantity: 2,
             image: '/images/margherita.jpg',
-            category: 'pizza'
           },
         ],
         total: 25.98,
@@ -83,7 +109,6 @@ export const useStore = create<StoreState>((set) => ({
             price: 14.99,
             quantity: 1,
             image: '/images/pepperoni.jpg',
-            category: 'pizza'
           },
           {
             id: '3',
@@ -92,7 +117,6 @@ export const useStore = create<StoreState>((set) => ({
             price: 8.99,
             quantity: 2,
             image: '/images/caesar.jpg',
-            category: 'appetizer'
           },
         ],
         total: 32.97,

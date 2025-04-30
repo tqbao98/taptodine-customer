@@ -3,11 +3,8 @@ export interface MenuItem {
   name: string;
   description: string;
   price: number;
-  image: string;
   category: string;
-  size?: string;
-  extras?: string[];
-  specialInstructions?: string;
+  image: string;
 }
 
 export interface CartItem extends MenuItem {
@@ -17,9 +14,8 @@ export interface CartItem extends MenuItem {
 
 export interface Order {
   id: string;
-  restaurantName: string;
   items: CartItem[];
   total: number;
   status: 'pending' | 'completed' | 'cancelled';
-  createdAt: string;
-}
+  createdAt: Date;
+} 

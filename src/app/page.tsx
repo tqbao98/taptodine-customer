@@ -224,7 +224,7 @@ export default function MenuPage() {
 
       {selectedDish && (
         <DishModal
-          item={selectedDish}
+          dish={selectedDish}
           isOpen={!!selectedDish}
           onClose={() => setSelectedDish(null)}
         />
