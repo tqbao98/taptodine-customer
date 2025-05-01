@@ -14,8 +14,9 @@ export interface CartItem extends MenuItem {
 
 export interface Order {
   id: string;
+  restaurantName: string;
   items: CartItem[];
   total: number;
   status: 'pending' | 'completed' | 'cancelled';
-  createdAt: Date;
-} 
+  createdAt: string;
+}

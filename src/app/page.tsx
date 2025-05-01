@@ -7,15 +7,21 @@ import { Dish } from '@/types/menu';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useStore } from '@/store/useStore';
 import PlaceholderImage from '@/components/PlaceholderImage';
+import { useRouter } from 'next/navigation';
 
 export default function MenuPage() {
   const { menu, fetchMenu, isLoading: isMenuLoading, error } = useStore();
+  const { cart } = useStore();
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [imageStates, setImageStates] = useState<Record<string, { loading: boolean; error: boolean }>>({});
   const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  const router = useRouter();
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   useEffect(() => {
     fetchMenu();
@@ -130,7 +136,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="py-6">
+    <div className="py-6 pb-24">
       <div
         ref={sliderRef}
         className="flex space-x-4 overflow-x-auto pb-4 mb-6 scrollbar-hide"
@@ -228,6 +234,26 @@ export default function MenuPage() {
           isOpen={!!selectedDish}
           onClose={() => setSelectedDish(null)}
         />
+      )}
+
+      {/* Floating Cart Button */}
+      {cart.length > 0 && (
+        <div className={`fixed bottom-0 left-0 right-0 p-4 ${selectedDish ? 'opacity-50 pointer-events-none' : ''} z-40`}>
+          <div className="max-w-7xl mx-auto px-2 sm:px-4">
+            <button
+              onClick={() => router.push('/cart')}
+              className="w-full flex justify-between items-center px-6 py-4 text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg"
+            >
+              <div className="flex items-center space-x-2">
+                <span className="text-lg font-medium">View Cart</span>
+                <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
+                  {totalItems} {totalItems === 1 ? 'item' : 'items'}
+                </span>
+              </div>
+              <span className="text-lg font-medium">${total.toFixed(2)}</span>
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

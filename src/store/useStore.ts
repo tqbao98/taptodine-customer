@@ -1,34 +1,7 @@
 import { create } from 'zustand';
+import { CartItem, MenuItem, Order } from '@/types';
 
-export interface CartItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  image: string;
-  options?: string[];
-}
-
-export interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-}
-
-export interface Order {
-  id: string;
-  restaurantName: string;
-  items: CartItem[];
-  total: number;
-  status: 'pending' | 'completed' | 'cancelled';
-  createdAt: string;
-}
-
-interface StoreState {
+export interface StoreState {
   cart: CartItem[];
   menu: MenuItem[];
   orders: Order[];
@@ -79,52 +52,29 @@ export const useStore = create<StoreState>((set) => ({
     })),
   clearCart: () => set({ cart: [] }),
   fetchOrders: async () => {
-    // In a real app, this would fetch orders from an API
-    const mockOrders: Order[] = [
-      {
-        id: '1',
-        restaurantName: 'Pizza Palace',
-        items: [
-          {
-            id: '1',
-            name: 'Margherita Pizza',
-            description: 'Classic pizza with tomato sauce, mozzarella, and basil',
-            price: 12.99,
-            quantity: 2,
-            image: '/images/margherita.jpg',
-          },
-        ],
-        total: 25.98,
-        status: 'completed',
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        restaurantName: 'Pizza Palace',
-        items: [
-          {
-            id: '2',
-            name: 'Pepperoni Pizza',
-            description: 'Pizza with tomato sauce, mozzarella, and pepperoni',
-            price: 14.99,
-            quantity: 1,
-            image: '/images/pepperoni.jpg',
-          },
-          {
-            id: '3',
-            name: 'Caesar Salad',
-            description: 'Romaine lettuce, croutons, parmesan, and Caesar dressing',
-            price: 8.99,
-            quantity: 2,
-            image: '/images/caesar.jpg',
-          },
-        ],
-        total: 32.97,
-        status: 'pending',
-        createdAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-      },
-    ];
-    set({ orders: mockOrders });
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      set({ orders: data.orders, isLoading: false });
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to fetch orders',
+        isLoading: false 
+      });
+    }
   },
   addOrder: (order) =>
     set((state) => ({
