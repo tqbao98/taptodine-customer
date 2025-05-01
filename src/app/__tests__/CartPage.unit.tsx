@@ -1,8 +1,18 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import CartPage from '../cart/page'
 import { useStore } from '../../store/useStore'
+import Image from 'next/image'
 
-// Mock the useRouter
+// Mock next/image
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: function MockImage({ src, alt }: { src: string; alt: string }) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={alt} />
+  },
+}))
+
+// Mock useRouter
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {
@@ -24,6 +34,11 @@ describe('CartPage Component (Unit)', () => {
     })
   })
 
+  afterEach(() => {
+    cleanup() // Clean up after each test
+    jest.clearAllMocks() // Clear all mocks
+  })
+
   // Tests if the empty cart message is displayed when there are no items
   test('renders empty cart message when cart is empty', () => {
     render(<CartPage />)
@@ -40,6 +55,7 @@ describe('CartPage Component (Unit)', () => {
         price: 10.99,
         quantity: 2,
         image: '/test.jpg',
+        category: 'pizza',
       },
     ]
 
@@ -61,6 +77,7 @@ describe('CartPage Component (Unit)', () => {
         price: 10.99,
         quantity: 1,
         image: '/test.jpg',
+        category: 'pizza',
       },
     ]
 
@@ -88,6 +105,7 @@ describe('CartPage Component (Unit)', () => {
         price: 10.99,
         quantity: 1,
         image: '/test.jpg',
+        category: 'pizza',
       },
     ]
 
@@ -112,6 +130,7 @@ describe('CartPage Component (Unit)', () => {
         price: 10.99,
         quantity: 2,
         image: '/test.jpg',
+        category: 'pizza',
       },
       {
         id: '2',
@@ -120,6 +139,7 @@ describe('CartPage Component (Unit)', () => {
         price: 12.99,
         quantity: 1,
         image: '/test.jpg',
+        category: 'pasta',
       },
     ]
 
@@ -131,7 +151,7 @@ describe('CartPage Component (Unit)', () => {
     expect(screen.getByText('$34.97')).toBeInTheDocument()
   })
 
-  // Tests if checkout button is disabled when cart is empty
+  // Tests if checkout button is removed when cart is empty
   test('removes checkout button when cart is empty', () => {
     render(<CartPage />)
     expect(screen.queryByRole('button', { name: /checkout/i })).not.toBeInTheDocument()
@@ -147,6 +167,7 @@ describe('CartPage Component (Unit)', () => {
         price: 10.99,
         quantity: 1,
         image: '/test.jpg',
+        category: 'pizza',
       },
     ]
 

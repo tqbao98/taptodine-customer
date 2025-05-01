@@ -38,6 +38,7 @@ describe('Cart Component (Unit)', () => {
         price: 10.99,
         quantity: 2,
         image: '/test.jpg',
+        category: 'pizza',
       },
     ]
 

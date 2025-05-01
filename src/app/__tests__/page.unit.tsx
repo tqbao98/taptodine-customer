@@ -1,8 +1,17 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import MenuPage from '../page';
 import { useStore } from '@/store/useStore';
 import type { StoreState } from '@/store/useStore';
 import Image from 'next/image';
+
+// Mock IntersectionObserver
+const mockIntersectionObserver = jest.fn();
+mockIntersectionObserver.mockImplementation(callback => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn()
+}));
+window.IntersectionObserver = mockIntersectionObserver;
 
 // Mock useRouter
 const mockPush = jest.fn();
@@ -37,11 +46,13 @@ jest.mock('@/components/LoadingSpinner', () => {
   };
 });
 
-jest.mock('next/image', () => {
-  return function MockImage({ src, alt }: { src: string; alt: string }) {
-    return <Image src={src} alt={alt} />;
-  };
-});
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: function MockImage({ src, alt }: { src: string; alt: string }) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={alt} />
+  },
+}));
 
 describe('MenuPage Component (Unit)', () => {
   const mockDish = {
@@ -76,6 +87,11 @@ describe('MenuPage Component (Unit)', () => {
       };
       return selector ? selector(state) : state;
     });
+  });
+
+  afterEach(() => {
+    cleanup(); // Clean up after each test
+    jest.clearAllMocks(); // Clear all mocks after each test
   });
 
   // Tests if floating cart button is not shown when cart is empty
