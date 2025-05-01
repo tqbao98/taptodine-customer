@@ -61,7 +61,7 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
 
           {/* Scrollable Content */}
           <div className="overflow-y-auto flex-1 p-6">
-            <div className="relative h-64 w-full mb-4 rounded-lg overflow-hidden">
+            <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden">
               {dish.image && !imageState.error ? (
                 <>
                   <Image
@@ -86,17 +86,17 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
               )}
             </div>
             
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{dish.name}</h3>
-            <p className="text-gray-600 mb-4">{dish.description}</p>
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{dish.name}</h3>
+            <p className="text-gray-600 mb-3">{dish.description}</p>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-lg font-bold text-gray-900">
                 ${dish.price.toFixed(2)}
               </span>
             </div>
 
             {/* Size Options */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">Size</h3>
+            <div className="mb-5">
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Size</h3>
               <div className="flex gap-2">
                 {['small', 'regular', 'large'].map((size) => (
                   <button
@@ -115,8 +115,8 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
             </div>
 
             {/* Extra Options */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">Extras</h3>
+            <div className="mb-5">
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Extras</h3>
               <div className="grid grid-cols-2 gap-2">
                 {['Extra Meat', 'Extra Cheese', 'Extra Vegetables', 'Spicy'].map((extra) => (
                   <label key={extra} className="flex items-center space-x-2">
@@ -133,8 +133,8 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
             </div>
 
             {/* Special Instructions */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">Special Instructions</h3>
+            <div>
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Special Instructions</h3>
               <textarea
                 value={specialInstructions}
                 onChange={(e) => setSpecialInstructions(e.target.value)}
@@ -174,9 +174,9 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
               <button
                 onClick={handleAddToCart}
                 className="flex-1 ml-4 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-                aria-label={`Add to cart - $${(dish.price * quantity).toFixed(2)}`}
+                aria-label={`Add to cart`}
               >
-                Add to Cart - ${(dish.price * quantity).toFixed(2)}
+                Add to Cart
               </button>
             </div>
           </div>

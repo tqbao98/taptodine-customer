@@ -133,17 +133,4 @@ describe('DishModal Component (Unit)', () => {
     expect(mockOnClose).toHaveBeenCalledTimes(1)
   })
 
-  // Tests if subtotal updates correctly when quantity changes
-  test('updates subtotal when quantity changes', () => {
-    render(<DishModal dish={mockDish} isOpen={true} onClose={mockOnClose} />)
-
-    const incrementButton = screen.getByRole('button', { name: /increase quantity/i })
-    fireEvent.click(incrementButton)
-
-    // Use a function to check for the price text since it might have spaces
-    expect(screen.getByText((content) => {
-      // Check if the text contains $21.98, ignoring spaces and line breaks
-      return content.replace(/\s+/g, '').includes('$21.98')
-    })).toBeInTheDocument()
-  })
 })

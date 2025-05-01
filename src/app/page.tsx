@@ -136,7 +136,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="py-6 pb-24">
+    <div className="py-6 pb-6">
       <div
         ref={sliderRef}
         className="flex space-x-4 overflow-x-auto pb-4 mb-6 scrollbar-hide"
