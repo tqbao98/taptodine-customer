@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import MenuPage from '../page';
 import { useStore } from '@/store/useStore';
 import type { StoreState } from '@/store/useStore';
+import Image from 'next/image';
 
 // Mock useRouter
 const mockPush = jest.fn();
@@ -38,7 +39,7 @@ jest.mock('@/components/LoadingSpinner', () => {
 
 jest.mock('next/image', () => {
   return function MockImage({ src, alt }: { src: string; alt: string }) {
-    return <img src={src} alt={alt} />;
+    return <Image src={src} alt={alt} />;
   };
 });
 

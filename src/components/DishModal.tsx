@@ -32,13 +32,11 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
   };
 
   const handleAddToCart = () => {
-    const customizedDish = {
+    const item = {
       ...dish,
-      size: selectedSize,
-      extras: Object.keys(extras).filter(key => extras[key]),
-      specialInstructions,
+      quantity
     };
-    addToCart(customizedDish, quantity);
+    addToCart(item, quantity);
     onClose();
   };
 
@@ -54,6 +52,7 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors"
+            aria-label="Close"
           >
             <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -73,7 +72,7 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority
                     quality={90}
-                    onLoadingComplete={handleImageLoad}
+                    onLoad={handleImageLoad}
                     onError={handleImageError}
                   />
                   {imageState.loading && (
@@ -149,19 +148,23 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
           {/* Fixed Action Buttons */}
           <div className="bg-white border-t border-gray-200 px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4" role="group" aria-label="Quantity controls">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  aria-label="Decrease quantity"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                   </svg>
                 </button>
-                <span className="text-lg font-semibold">{quantity}</span>
+                <span className="text-lg font-semibold" role="spinbutton" aria-valuenow={quantity} aria-valuemin={1}>
+                  {quantity}
+                </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  aria-label="Increase quantity"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -171,6 +174,7 @@ export default function DishModal({ dish, isOpen, onClose }: DishModalProps) {
               <button
                 onClick={handleAddToCart}
                 className="flex-1 ml-4 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                aria-label={`Add to cart - $${(dish.price * quantity).toFixed(2)}`}
               >
                 Add to Cart - ${(dish.price * quantity).toFixed(2)}
               </button>

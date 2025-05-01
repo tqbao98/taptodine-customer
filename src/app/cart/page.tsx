@@ -12,6 +12,14 @@ export default function CartPage() {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeFromCart(itemId);
+    } else {
+      updateQuantity(itemId, newQuantity);
+    }
+  };
+
   const handleCheckout = () => {
     router.push('/checkout');
   };
@@ -20,7 +28,7 @@ export default function CartPage() {
     return (
       <div className="py-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 px-4 sm:px-6">Your Cart</h1>
-        <p className="text-gray-500 px-4 sm:px-6">Your cart is empty</p>
+        <p className="text-gray-500 px-4 sm:px-6" role="alert">Your cart is empty</p>
       </div>
     );
   }
@@ -54,19 +62,23 @@ export default function CartPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2" role="group" aria-label="Quantity controls">
                 <button
                   onClick={() =>
-                    updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                    handleUpdateQuantity(item.id, Math.max(0, item.quantity - 1))
                   }
                   className="text-gray-500 hover:text-gray-700"
+                  aria-label="Decrease quantity"
                 >
                   -
                 </button>
-                <span className="text-gray-600">{item.quantity}</span>
+                <span className="text-gray-600" role="spinbutton" aria-valuenow={item.quantity} aria-valuemin={1}>
+                  {item.quantity}
+                </span>
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                   className="text-gray-500 hover:text-gray-700"
+                  aria-label="Increase quantity"
                 >
                   +
                 </button>
@@ -77,6 +89,7 @@ export default function CartPage() {
               <button
                 onClick={() => removeFromCart(item.id)}
                 className="text-gray-400 hover:text-gray-600"
+                aria-label={`Remove ${item.name} from cart`}
               >
                 <TrashIcon className="h-5 w-5" />
               </button>
@@ -90,7 +103,9 @@ export default function CartPage() {
         <div className="max-w-7xl mx-auto px-2 sm:px-4">
           <button
             onClick={handleCheckout}
-            className="w-full flex justify-between items-center px-6 py-4 text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 transition-colors"
+            className="w-full flex justify-between items-center px-6 py-4 text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={cart.length === 0}
+            aria-label={`Checkout with ${totalItems} items for $${total.toFixed(2)}`}
           >
             <div className="flex items-center space-x-2">
               <span className="text-lg font-medium">Checkout</span>
@@ -104,4 +119,4 @@ export default function CartPage() {
       </div>
     </div>
   );
-} 
+}
