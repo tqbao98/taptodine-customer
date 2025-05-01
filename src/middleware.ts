@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Add protected routes that shouldn't be treated as subdomains
+const PROTECTED_ROUTES = ['api', '_next', 'favicon.ico', 'cart', 'orders', 'checkout', 'success'];
+
 export function middleware(request: NextRequest) {
   // Get hostname (e.g. vercel.com, test.vercel.app, etc.)
   const hostname = request.headers.get('host') || '';
 
-  // Define your main domain
-  // const mainDomain = 'taptodine-customer.vercel.com'; // Change this to your actual domain
   const isLocalhost = hostname.includes('localhost') || hostname.includes('127.0.0.1');
 
   // Get the subdomain
@@ -25,7 +26,7 @@ export function middleware(request: NextRequest) {
     // For localhost testing, check if subdomain is in the pathname
     // e.g. localhost:3000/customer1
     const pathParts = request.nextUrl.pathname.split('/');
-    if (pathParts[1] && !['api', '_next', 'favicon.ico'].includes(pathParts[1])) {
+    if (pathParts[1] && !PROTECTED_ROUTES.includes(pathParts[1])) {
       subdomain = pathParts[1];
       // Rewrite the URL to remove the subdomain from the path
       const newPathname = '/' + pathParts.slice(2).join('/');
