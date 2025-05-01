@@ -1,7 +1,7 @@
 'use client';
 
 import { useStore } from '@/store/useStore';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -27,7 +27,16 @@ export default function CartPage() {
   if (cart.length === 0) {
     return (
       <div className="py-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 px-4 sm:px-6">Your Cart</h1>
+        <div className="flex items-center space-x-4 mb-8 px-4 sm:px-6">
+          <button
+            onClick={() => router.push('/')}
+            className="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-full"
+            aria-label="Back to menu"
+          >
+            <ArrowLeftIcon className="h-6 w-6" />
+          </button>
+          <h1 className="text-3xl font-bold text-gray-900">Your Cart</h1>
+        </div>
         <p className="text-gray-500 px-4 sm:px-6" role="alert">Your cart is empty</p>
       </div>
     );
@@ -35,7 +44,16 @@ export default function CartPage() {
 
   return (
     <div className="py-6 pb-24">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8 px-4 sm:px-6">Your Cart</h1>
+      <div className="flex items-center space-x-4 mb-8 px-4 sm:px-6">
+        <button
+          onClick={() => router.push('/')}
+          className="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-full"
+          aria-label="Back to menu"
+        >
+          <ArrowLeftIcon className="h-6 w-6" />
+        </button>
+        <h1 className="text-3xl font-bold text-gray-900">Your Cart</h1>
+      </div>
       <div className="divide-y divide-gray-200 px-4 sm:px-6">
         {cart.map((item) => (
           <div key={item.id} className="flex items-center justify-between py-4">

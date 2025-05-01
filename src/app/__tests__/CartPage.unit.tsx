@@ -1,15 +1,13 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import CartPage from '../cart/page'
 import { useStore } from '../../store/useStore'
+//import * as navigation from 'next/navigation'
 
-
-// Mock useRouter
+const mockPush = jest.fn()
 jest.mock('next/navigation', () => ({
-  useRouter() {
-    return {
-      push: jest.fn(),
-    }
-  },
+  useRouter: () => ({
+    push: mockPush
+  })
 }))
 
 describe('CartPage Component (Unit)', () => {
@@ -23,6 +21,7 @@ describe('CartPage Component (Unit)', () => {
       error: null,
       restaurantName: '',
     })
+    mockPush.mockClear()
   })
 
   afterEach(() => {
@@ -169,4 +168,35 @@ describe('CartPage Component (Unit)', () => {
     const checkoutButton = screen.getByRole('button', { name: /checkout/i })
     expect(checkoutButton).toBeEnabled()
   })
+
+  // Tests if back button is rendered and works correctly in empty cart
+  test('back button navigates to menu in empty cart', () => {
+    render(<CartPage />);
+    const backButton = screen.getByRole('button', { name: /back to menu/i });
+    expect(backButton).toBeInTheDocument();
+    
+    fireEvent.click(backButton);
+    expect(mockPush).toHaveBeenCalledWith('/');
+  });
+
+  // Tests if back button is rendered and works correctly with items in cart
+  test('back button navigates to menu with items in cart', () => {
+    const cartItems = [{
+      id: '1',
+      name: 'Test Pizza',
+      description: 'Test Description',
+      price: 10.99,
+      quantity: 1,
+      image: '/test.jpg',
+      category: 'pizza',
+    }];
+    useStore.setState({ cart: cartItems });
+
+    render(<CartPage />);
+    const backButton = screen.getByRole('button', { name: /back to menu/i });
+    expect(backButton).toBeInTheDocument();
+    
+    fireEvent.click(backButton);
+    expect(mockPush).toHaveBeenCalledWith('/');
+  });
 })
