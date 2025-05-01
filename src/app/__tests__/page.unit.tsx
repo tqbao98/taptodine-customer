@@ -2,15 +2,20 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import MenuPage from '../page';
 import { useStore } from '@/store/useStore';
 import type { StoreState } from '@/store/useStore';
-import Image from 'next/image';
 
 // Mock IntersectionObserver
 const mockIntersectionObserver = jest.fn();
-mockIntersectionObserver.mockImplementation(callback => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn()
-}));
+mockIntersectionObserver.mockImplementation((callback) => {
+  const instance = {
+    observe: jest.fn((element) => {
+      // Simulate intersection immediately
+      callback([{ isIntersecting: true, target: element }]);
+    }),
+    unobserve: jest.fn(),
+    disconnect: jest.fn()
+  };
+  return instance;
+});
 window.IntersectionObserver = mockIntersectionObserver;
 
 // Mock useRouter
